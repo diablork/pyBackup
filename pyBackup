@@ -2,3 +2,24 @@
 
 # Author: Florin Baca
 # Date: July 2013
+
+import sys
+
+CONF = 'backup.conf'
+
+# Parse the config file. We are mainly
+# interested to drop comments and blank
+# lines.
+
+def parseConfig(loc=CONF):
+	try:
+		file = open(loc, 'r')
+		conf = file.readlines()
+		file.close()
+	except:
+		print "Unable to open config file: %s\nPlease retry with a valid config file." % loc
+		sys.exit(1)
+
+
+if __name__ == '__main__':
+	parseConfig()
