@@ -3,7 +3,7 @@
 # Author: Florin Baca
 # Date: July 2013
 
-import sys, tarfile
+import sys, tarfile, os, time
 
 CONF = 'backup.conf'
 
@@ -25,14 +25,39 @@ def parseConfig(loc=CONF):
 			line = line.replace('\n', '')
 			param = line.split('=')[0]
 			values = line.split('=')[1:]
-			values = values[0].split()
+			if ',' in values:
+				values = values[0].split()
 			conf[param] = values
 
 	return conf
 
 def archiveFiles(dest, name, source=[]):
-	
+	if not '.tar.gz' in name:
+		name = str(name) + '.tar.gz'
+	dest = str(dest) + '/' + str(name)
+	if not os.path.isfile(dest):
+		tarFile = tarfile.open(dest, 'w:gz')
+		for path in source:
+			print "Adding %s to %s" % (path, name)
+			init = time.time()
+			tarFile.add(path)
+			end = time.time() - init
+			print "Finished in %.2f" % end
+		tarFile.close()
+	else:
+		print "%s already exists, please retry." % dest
+
+def fileName():
+	name = 'pyBackup' + str(time.strftime('%d%m%Y%H%M%S', time.localtime()))
+	return name
+
+def main():
+	params = parseConfig()
+	print params
+	dest = params['destination'][0]
+	source = params['source']
+	name = fileName()
+	archiveFiles(dest, name, source)
 
 if __name__ == '__main__':
-	i = parseConfig()
-	print i
+	main()
