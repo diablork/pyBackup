@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Author: Florin Baca
+# Author: FB
 # Date: July 2013
 
 import sys, tarfile, os, time
