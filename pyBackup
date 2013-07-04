@@ -5,7 +5,11 @@
 
 import sys, tarfile, os, time
 
-CONF = 'backup.conf'
+if os.path.isfile('backup.conf'):
+	CONF = 'backup.conf'
+else:
+	dir = os.path.dirname(sys.argv[0])
+	CONF = str(dir) + '/' + 'backup.conf'
 
 # Parse the config file. We are mainly
 # interested to drop comments and blank
@@ -89,7 +93,6 @@ def checkDir(path):
 
 def main():
 	params = parseConfig()
-	print params
 	dest = params['destination']
 	checkDir(dest)
 	source = params['source']
