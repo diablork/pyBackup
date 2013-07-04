@@ -21,40 +21,77 @@ def parseConfig(loc=CONF):
 		sys.exit(1)
 	conf = {}
 	for line in data:
-		if ((not line.startswith('#') and line != '\n')):
-			line = line.replace('\n', '')
-			param = line.split('=')[0]
-			values = line.split('=')[1:]
-			if ',' in values:
-				values = values[0].split()
-			conf[param] = values
-
+		if line.startswith('#'):
+			# comments
+			pass
+		elif line == '\n':
+			# blank line
+			pass
+		elif '=' in line:
+			# this is one of the params
+			# we can have a single value
+			# or multiple values separated by ,
+			if ',' in line:
+				line = line.replace(' ', '')
+				line = line.replace('\n', '')
+				param = line.split('=')[0]
+				values = line.split('=')[1:]
+				values = values[0].split(',')
+				conf[param] = values
+			else:
+				line = line.replace(' ', '')
+				line = line.replace('\n', '')
+				param = line.split('=')[0]
+				value = line.split('=')[1]
+				conf[param] = value
+		else:
+			pass
 	return conf
 
-def archiveFiles(dest, name, source=[]):
+def archiveFiles(dest, name, source):
 	if not '.tar.gz' in name:
 		name = str(name) + '.tar.gz'
 	dest = str(dest) + '/' + str(name)
 	if not os.path.isfile(dest):
 		tarFile = tarfile.open(dest, 'w:gz')
-		for path in source:
-			print "Adding %s to %s" % (path, name)
+		if isinstance(source, list):
+			for path in source:
+				print "Adding %s to %s" % (path, name)
+				init = time.time()
+				tarFile.add(path)
+				end = time.time() - init
+				print "Finished in %.2f" % end
+		else: 
+			print "Adding %s to %s" % (source, name)
 			init = time.time()
-			tarFile.add(path)
+			tarFile.add(source)
 			end = time.time() - init
 			print "Finished in %.2f" % end
 		tarFile.close()
 	else:
-		print "%s already exists, please retry." % dest
+		print "[ERROR] %s already exists, please retry." % dest
 
 def fileName():
 	name = 'pyBackup' + str(time.strftime('%d%m%Y%H%M%S', time.localtime()))
 	return name
 
+def checkDir(path):
+	if os.path.exists(path):
+		if os.path.isfile(path):
+			print "%s already exists, but it's a file. Please specify a different path" % path
+			sys.exit(1)
+		elif os.path.isdir(path):
+			return 0
+	else:
+		os.mkdir(path)
+		return 0
+		
+
 def main():
 	params = parseConfig()
 	print params
-	dest = params['destination'][0]
+	dest = params['destination']
+	checkDir(dest)
 	source = params['source']
 	name = fileName()
 	archiveFiles(dest, name, source)
