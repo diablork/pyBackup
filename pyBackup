@@ -3,7 +3,7 @@
 # Author: Florin Baca
 # Date: July 2013
 
-import sys
+import sys, tarfile
 
 CONF = 'backup.conf'
 
@@ -14,12 +14,25 @@ CONF = 'backup.conf'
 def parseConfig(loc=CONF):
 	try:
 		file = open(loc, 'r')
-		conf = file.readlines()
+		data = file.readlines()
 		file.close()
 	except:
 		print "Unable to open config file: %s\nPlease retry with a valid config file." % loc
 		sys.exit(1)
+	conf = {}
+	for line in data:
+		if ((not line.startswith('#') and line != '\n')):
+			line = line.replace('\n', '')
+			param = line.split('=')[0]
+			values = line.split('=')[1:]
+			values = values[0].split()
+			conf[param] = values
 
+	return conf
+
+def archiveFiles(dest, name, source=[]):
+	
 
 if __name__ == '__main__':
-	parseConfig()
+	i = parseConfig()
+	print i
