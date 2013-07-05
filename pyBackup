@@ -63,17 +63,17 @@ def archiveFiles(dest, name, source):
 		tarFile = tarfile.open(dest, 'w:gz')
 		if isinstance(source, list):
 			for path in source:
-				print "Adding %s to %s" % (path, name)
+				print "Adding %s to %s" % (path, dest),
 				init = time.time()
 				tarFile.add(path)
 				end = time.time() - init
-				print "Finished in %.2f" % end
+				print "=> Finished in %.2f" % end
 		else: 
-			print "Adding %s to %s" % (source, name)
+			print "Adding %s to %s" % (source, dest)
 			init = time.time()
 			tarFile.add(source)
 			end = time.time() - init
-			print "Finished in %.2f" % end
+			print "=> Finished in %.2f" % end,
 		tarFile.close()
 	else:
 		print "[ERROR] %s already exists, please retry." % dest
