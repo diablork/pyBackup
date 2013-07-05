@@ -36,14 +36,19 @@ def parseConfig(loc=CONF):
 			# we can have a single value
 			# or multiple values separated by ,
 			if ',' in line:
-				line = line.replace(' ', '')
+				line = line.strip()
 				line = line.replace('\n', '')
 				param = line.split('=')[0]
-				values = line.split('=')[1:]
-				values = values[0].split(',')
+				val = line.split('=')[1:]
+				val = val[0].split(',')
+				print val
+				values = []
+				for i in val:
+					i = i.strip()
+					values.append(i)
 				conf[param] = values
 			else:
-				line = line.replace(' ', '')
+				line = line.strip()
 				line = line.replace('\n', '')
 				param = line.split('=')[0]
 				value = line.split('=')[1]
