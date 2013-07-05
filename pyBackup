@@ -65,18 +65,40 @@ def archiveFiles(dest, name, source):
 			for path in source:
 				print "Adding %s to %s" % (path, dest),
 				init = time.time()
-				tarFile.add(path)
+				files = listDir(path)
+				for i in files:
+					tarFile.add(i)
 				end = time.time() - init
 				print "=> Finished in %.2f" % end
 		else: 
 			print "Adding %s to %s" % (source, dest)
 			init = time.time()
+			files = listDir(source)
+			for i in files:
+				tarFile.add(i)
 			tarFile.add(source)
 			end = time.time() - init
 			print "=> Finished in %.2f" % end,
 		tarFile.close()
 	else:
 		print "[ERROR] %s already exists, please retry." % dest
+
+
+# On Windows, if we try to tar system files which the user does not
+# have access to, tar will die. So we need to parse the dirs ourselves.
+
+def listDir(dir):
+	files = []		
+        for d in os.listdir(dir):
+                path = dir + os.sep + d
+                # don't follow links :)
+                if os.path.isdir(path) and not os.path.islink(path):
+                        files.append(path)
+                        listDir(path)
+                else:
+                        files.append(path)
+	return files
+
 
 def fileName():
 	name = 'pyBackup' + str(time.strftime('%d%m%Y%H%M%S', time.localtime()))
