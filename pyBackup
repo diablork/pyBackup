@@ -89,7 +89,11 @@ def archiveFiles(dest, name, source):
 
 def listDir(dir):
 	files = []		
-        for d in os.listdir(dir):
+	try:
+		listing = os.listdir(dir)
+	except WindowsError:
+		print "Skipping %s" % dir
+	for d in listing:
                 path = dir + os.sep + d
                 # don't follow links :)
                 if os.path.isdir(path) and not os.path.islink(path):
